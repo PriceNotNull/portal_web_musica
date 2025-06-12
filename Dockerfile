@@ -1,4 +1,4 @@
-# Usa la imagen oficial de PHP con extensiones necesarias
+# Usa la imagen oficial de PHP con FPM y extensiones necesarias
 FROM php:8.2-fpm
 
 # Instala dependencias del sistema
@@ -16,24 +16,22 @@ RUN apt-get update && apt-get install -y \
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el proyecto
+# Establece el directorio de trabajo
 WORKDIR /var/www
+
+# Copia los archivos del proyecto
 COPY . .
 
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Genera la APP_KEY y crea el enlace de storage
-RUN php artisan config:clear \
-    && php artisan key:generate \
-    && php artisan storage:link
-
-# Establece permisos si es necesario
+# Ajusta permisos
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+    && chmod -R 755 /var/www/storage \
+    && chmod -R 755 /var/www/bootstrap/cache
 
-# Puerto por defecto de Laravel
+# Expone el puerto para que Railway lo detecte
 EXPOSE 8000
 
-# Comando para iniciar Laravel (puedes usar otro si usas nginx o supervisor)
+# Comando para iniciar Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
