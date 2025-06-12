@@ -11,4 +11,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    // IMPORTANTE PARA PRODUCCIÓN EN RAILWAY
+    build: {
+        manifest: true,
+        outDir: 'public/build',
+        rollupOptions: {
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+        },
+    },
 });
