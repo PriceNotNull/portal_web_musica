@@ -6,35 +6,36 @@
 @section('content')
 <div class="container mx-auto px-4 min-h-screen">
 
-    {{-- Filtro de género como dropdown --}}
-    <div class="mb-4 max-w-sm">
-        <label for="genero-select" class="block mb-1 font-semibold text-gray-700">Filtrar por género:</label>
-        <form method="GET" action="{{ route('inicio') }}">
-            <select id="genero-select" name="genero" onchange="this.form.submit()"
-                class="w-full border border-gray-300 rounded px-3 py-2">
-                <option value="" {{ request('genero') ? '' : 'selected' }}>Todas</option>
-                @foreach ($generos as $genero)
-                <option value="{{ $genero->id }}" {{ request('genero') == $genero->id ? 'selected' : '' }}>
-                    {{ $genero->nombre }}
-                </option>
-                @endforeach
-            </select>
+    <div class="mb-6 flex justify-between items-center max-w-full gap-4">
+        {{-- Filtro de género como dropdown --}}
+        <div class="max-w-sm">
+            <label for="genero-select" class="block mb-1 font-semibold text-gray-700">Filtrar por género:</label>
+            <form method="GET" action="{{ route('inicio') }}">
+                <select id="genero-select" name="genero" onchange="this.form.submit()"
+                    class="w-full border border-gray-300 rounded px-3 py-2">
+                    <option value="" {{ request('genero') ? '' : 'selected' }}>Todas</option>
+                    @foreach ($generos as $genero)
+                    <option value="{{ $genero->id }}" {{ request('genero') == $genero->id ? 'selected' : '' }}>
+                        {{ $genero->nombre }}
+                    </option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
+
+        {{-- Barra de Búsqueda --}}
+        <form method="GET" action="{{ route('inicio') }}" class="flex gap-2 items-center max-w-sm w-full sm:w-auto">
+            <input type="text" name="q" placeholder="Buscar canción o artista..." value="{{ request('q') }}"
+                class="border border-gray-300 rounded px-4 py-2 w-full sm:w-64">
+            {{-- Mantener filtro género en el formulario de búsqueda --}}
+            @if (request('genero'))
+            <input type="hidden" name="genero" value="{{ request('genero') }}">
+            @endif
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                Buscar
+            </button>
         </form>
     </div>
-
-    {{-- Barra de Búsqueda --}}
-    <form method="GET" action="{{ route('inicio') }}"
-        class="mb-6 flex flex-wrap gap-2 items-center justify-end max-w-sm">
-        <input type="text" name="q" placeholder="Buscar canción o artista..." value="{{ request('q') }}"
-            class="border border-gray-300 rounded px-4 py-2 w-full sm:w-64">
-        {{-- Mantener filtro género en el formulario de búsqueda --}}
-        @if (request('genero'))
-        <input type="hidden" name="genero" value="{{ request('genero') }}">
-        @endif
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-            Buscar
-        </button>
-    </form>
 
     {{-- Grid de canciones --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
