@@ -25,17 +25,16 @@ COPY . .
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+# Crear enlace simbólico para storage
+RUN php artisan storage:link
+
 # Ajusta permisos
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
     && chmod -R 755 /var/www/bootstrap/cache
 
-# Copia el script de inicio
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
 # Expone el puerto para que Railway lo detecte
 EXPOSE 8000
 
-# Usa el script start.sh para iniciar el contenedor
-CMD ["/start.sh"]
+# Comando para iniciar Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
