@@ -25,6 +25,9 @@ COPY . .
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+# Crear enlace simbólico para storage
+RUN php artisan storage:link
+
 # Ajusta permisos
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
