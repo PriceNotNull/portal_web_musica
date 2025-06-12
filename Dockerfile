@@ -25,6 +25,9 @@ COPY . .
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+# ⚠️ Crea el symlink manualmente
+RUN php artisan storage:link
+
 # Ajusta permisos
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage \
@@ -32,12 +35,12 @@ RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/public \
     && chmod -R 775 /var/www/bootstrap/cache
 
-# Copia el script de inicio
+# Copia el script de inicio (aunque no se ejecute por ahora)
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Expone el puerto para Railway
+# Expone el puerto
 EXPOSE 8000
 
-# Ejecuta el script personalizado al iniciar
-CMD ["/start.sh"]
+# Usa el servidor embebido de Laravel directamente
+CMD php artisan serve --host=0.0.0.0 --port=8000
